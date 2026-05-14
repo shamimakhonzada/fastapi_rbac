@@ -17,7 +17,7 @@ from app.features.users.service import (
 )
 from app.features.users.model import User
 
-router = APIRouter(prefix="/users", tags=["Users"])
+router = APIRouter(prefix="/api/v1/users", tags=["Users"])
 
 
 @router.get("/", response_model=StandardResponse[list[UserResponse]])

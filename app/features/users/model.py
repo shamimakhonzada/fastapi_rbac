@@ -1,4 +1,4 @@
-from sqlalchemy import Column, DateTime, Integer, String
+from sqlalchemy import Boolean, Column, DateTime, Integer, String
 from sqlalchemy.sql import func
 
 from app.common.enums.user_role import UserRole
@@ -12,8 +12,13 @@ class User(Base):
     username = Column(String, unique=True, index=True, nullable=False)
     email = Column(String, unique=True, index=True, nullable=False)
     full_name = Column(String, nullable=False)
-    password = Column("hashed_password", String, nullable=False)
+    password = Column("hashed_password", String, nullable=True)
     role = Column(String, default=UserRole.USER.value)
+
+    provider = Column(String, nullable=True)
+    provider_id = Column(String, nullable=True)
+    is_verified = Column(Boolean, default=False)
+
     created_at = Column(
         DateTime(timezone=True), server_default=func.now(), nullable=False
     )

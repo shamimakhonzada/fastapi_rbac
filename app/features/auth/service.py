@@ -11,6 +11,9 @@ def register_user(db: Session, user_data: RegisterSchema) -> User:
     if existing_user:
         return None
 
+    if user_data.password is None:
+        raise ValueError("Password is required for standard registration")
+
     hashed_password = hash_password(user_data.password)
     user_data.password = hashed_password
     return create_user(db, user_data)

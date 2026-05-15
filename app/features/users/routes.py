@@ -101,17 +101,12 @@ async def update_password(
     return success_response(message="Password updated successfully")
 
 
-@router.get("/me/profile")
-async def my_profile(current_user: User = Depends(get_current_user)):
+@router.get("/me/profile", response_model=StandardResponse[UserResponse])
+async def my_profile(
+    current_user: User = Depends(get_current_user),
+):
     return success_response(
-        data={
-            "id": current_user.id,
-            "profile_image": current_user.profile_image,
-            "username": current_user.username,
-            "email": current_user.email,
-            "role": current_user.role,
-            "full_name": current_user.full_name,
-        },
+        data=current_user,
         message="Profile retrieved successfully",
     )
 

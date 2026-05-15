@@ -26,7 +26,9 @@ class UserResponse(BaseModel):
     username: str
     email: EmailStr
     full_name: str
+    profile_image: Optional[str] = None
     role: str
+    is_verified: bool
     created_at: datetime
     updated_at: datetime
 

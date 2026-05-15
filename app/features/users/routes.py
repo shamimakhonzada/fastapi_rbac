@@ -45,7 +45,7 @@ async def get_user_by_id(
     )
 
 
-@router.put("/{user_id}", response_model=StandardResponse[UserResponse])
+@router.patch("/{user_id}", response_model=StandardResponse[UserResponse])
 async def update_user(
     user_id: int,
     user_update: UpdateUser,
@@ -60,7 +60,16 @@ async def update_user(
             status_code=403, detail="You do not have permission to update other users"
         )
 
-    updated_user = update_existing_user(db, user_id, user_update)
+    if current_user.role == UserRole.ADMIN:
+        updated_user = update_existing_user(db, user_id, user_update)
+
+    elif current_user.role != UserRole.ADMIN and current_user.id == user_id:
+        if user_update.role and user_update.role != current_user.role:
+            raise HTTPException(
+                status_code=403, detail="You cannot change your own role"
+            )
+        updated_user = update_existing_user(db, user_id, user_update)
+
     if not updated_user:
         raise HTTPException(status_code=404, detail="User not found")
     return success_response(
@@ -81,7 +90,7 @@ async def delete_user(
 
 
 @router.patch(
-    "/{user_id}",
+    "/{user_id}/change-password",
 )
 async def update_password(
     user_id: int, new_password: ChangePassword, db: Session = Depends(get_db)

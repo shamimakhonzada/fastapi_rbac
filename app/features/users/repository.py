@@ -18,9 +18,9 @@ def delete_user(db: Session, user: User) -> None:
 
 
 def update_user(db: Session, user: User, user_update: UpdateUser) -> User:
-    user.username = user_update.username
-    user.email = user_update.email
-    user.full_name = user_update.full_name
+    user.username = user_update.username if user_update.username else user.username
+    user.role = user_update.role if user_update.role else user.role
+    user.full_name = user_update.full_name if user_update.full_name else user.full_name
     db.commit()
     db.refresh(user)
     return user

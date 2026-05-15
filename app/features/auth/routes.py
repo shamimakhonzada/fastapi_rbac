@@ -96,6 +96,7 @@ async def google_callback(
 
     email = user_info.get("email")
     name = user_info.get("name")
+    google_picture = user_info.get("picture")
 
     if not email:
         raise HTTPException(
@@ -123,6 +124,12 @@ async def google_callback(
             provider_id=user_info.get("sub"),
         )
         user = create_user(db, user_data)
+        if not user.profile_image:
+            user.profile_image = google_picture
+
+        db.commit()
+        db.refresh(user)
+
     else:
         # existing user — link Google account if not already linked
         if not user.provider:

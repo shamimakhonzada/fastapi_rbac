@@ -105,6 +105,7 @@ async def update_password(
 async def my_profile(
     current_user: User = Depends(get_current_user),
 ):
+
     return success_response(
         data=current_user,
         message="Profile retrieved successfully",

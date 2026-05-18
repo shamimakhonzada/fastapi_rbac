@@ -1,3 +1,5 @@
+from datetime import datetime, timezone
+
 from sqlalchemy.orm import Session
 
 from app.features.auth.repository import create_user, get_user_by_email
@@ -29,10 +31,7 @@ def authenticate_user(db: Session, email: str, password: str) -> User | None:
 
 
 def build_access_token(user: User) -> str:
+    issued_at = datetime.now(timezone.utc)
     return create_access_token(
-        data={
-            "sub": user.email,
-            "role": user.role,
-            "id": user.id,
-        }
+        data={"sub": str(user.id), "role": user.role, "iat": issued_at}
     )

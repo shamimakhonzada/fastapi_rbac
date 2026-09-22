@@ -1,15 +1,15 @@
-from typing import Generator
+from collections.abc import Generator
 
+import jwt
 from fastapi import Depends, HTTPException, Request, status
 from fastapi.security import OAuth2PasswordBearer
-import jwt
 from sqlalchemy.orm import Session
 
 from app.core.config import settings
 from app.core.database import SessionLocal
 from app.features.users.model import User
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login", auto_error=False)
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login", auto_error=False)
 
 
 def get_db() -> Generator:
@@ -52,7 +52,6 @@ async def get_current_user(
     except jwt.InvalidTokenError:  # Catches DecodeError, InvalidSignatureError, etc.
         raise credentials_exception
     user = db.query(User).filter(User.id == id).first()
-    print(f"current user ${user}")
 
     if user is None:
         raise credentials_exception

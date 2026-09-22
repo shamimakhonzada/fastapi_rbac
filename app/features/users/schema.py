@@ -1,5 +1,4 @@
 from datetime import datetime
-from typing import Optional
 
 from pydantic import BaseModel, EmailStr
 
@@ -12,9 +11,9 @@ class UserCreate(BaseModel):
 
 
 class UpdateUser(BaseModel):
-    username: Optional[str] = None
-    full_name: Optional[str] = None
-    role: Optional[str] = None
+    username: str | None = None
+    full_name: str | None = None
+    role: str | None = None
 
 
 class ChangePassword(BaseModel):
@@ -26,7 +25,7 @@ class UserResponse(BaseModel):
     username: str
     email: EmailStr
     full_name: str
-    profile_image: Optional[str] = None
+    profile_image: str | None = None
     role: str
     is_verified: bool
     created_at: datetime

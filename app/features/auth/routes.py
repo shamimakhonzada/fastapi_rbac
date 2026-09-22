@@ -2,11 +2,11 @@ from fastapi import APIRouter, Depends, HTTPException, Request, Response
 from fastapi.responses import RedirectResponse
 from sqlalchemy.orm import Session
 
-from app.core.oauth import oauth
-from app.core.config import settings
-
 from app.common.responses.response_builder import success_response
-from app.core.dependencies import get_db
+from app.common.responses.standard_response import StandardResponse
+from app.core.config import settings
+from app.core.dependencies import get_current_user, get_db
+from app.core.oauth import oauth
 from app.features.auth.repository import (
     create_user,
     get_user_by_email,
@@ -15,10 +15,12 @@ from app.features.auth.repository import (
 )
 from app.features.auth.schema import LoginSchema, RegisterSchema
 from app.features.auth.service import (
+    authenticate_user,
     build_access_token,
     register_user,
-    authenticate_user,
 )
+from app.features.users.model import User
+from app.features.users.schema import UserResponse
 
 router = APIRouter(prefix="/api/v1/auth", tags=["Authentication"])
 
@@ -55,6 +57,17 @@ async def login(
 
     return success_response(
         message="Login successful",
+    )
+
+
+@router.get("/me", response_model=StandardResponse[UserResponse])
+async def my_profile(
+    current_user: User = Depends(get_current_user),
+):
+
+    return success_response(
+        data=current_user,
+        message="Profile retrieved successfully",
     )
 
 

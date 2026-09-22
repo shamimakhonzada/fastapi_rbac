@@ -12,8 +12,8 @@ from app.features.users.repository import (
 from app.features.users.schema import UpdateUser
 
 
-def list_users(db: Session) -> list[User]:
-    return get_all_users(db)
+def list_users(db: Session, skip: int = 0, limit: int = 10) -> list[User]:
+    return get_all_users(db, skip=skip, limit=limit)
 
 
 def get_user(db: Session, user_id: int) -> User | None:

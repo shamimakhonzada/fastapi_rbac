@@ -118,7 +118,14 @@ FRONTEND_URL=http://localhost:3000
 ```bash
 # Run all migrations
 alembic upgrade head
+
+# Add 1,000 repeatable dummy users for endpoint testing
+.venv/bin/python -m app.core.seeds.users_seed
 ```
+
+The seeded users use the password `admin@123`, have the `user` role, and use
+emails such as `dummy.user0001@example.com`. Running the seed command again is
+safe and does not create duplicates.
 
 ### Run the Server
 
@@ -139,6 +146,7 @@ The API will be available at `http://localhost:8000`. Interactive docs are at `/
 | `POST` | `/register` | Register with email and password | Public |
 | `POST` | `/login` | Login, sets `access_token` cookie | Public |
 | `POST` | `/logout` | Clears the auth cookie | Public |
+| `GET` | `/me` | Get the current user's profile | Authenticated |
 | `GET` | `/google/login` | Redirect to Google consent screen | Public |
 | `GET` | `/google/callback` | OAuth callback, redirects to frontend | Public |
 
@@ -148,10 +156,9 @@ The API will be available at `http://localhost:8000`. Interactive docs are at `/
 |---|---|---|---|
 | `GET` | `/` | List all users | Admin |
 | `GET` | `/{user_id}` | Get a user by ID | Admin |
-| `PUT` | `/{user_id}` | Update a user | Owner or Admin |
+| `PATCH` | `/{user_id}` | Update a user | Owner or Admin |
 | `DELETE` | `/{user_id}` | Delete a user | Admin |
-| `PATCH` | `/{user_id}` | Change a user's password | Authenticated |
-| `GET` | `/me/profile` | Get the current user's profile | Authenticated |
+| `PATCH` | `/{user_id}/change-password` | Change a user's password | Authenticated |
 
 ---
 
@@ -161,7 +168,8 @@ The API will be available at `http://localhost:8000`. Interactive docs are at `/
 
 1. `POST /api/v1/auth/register` with `username`, `email`, `full_name`, `password`
 2. `POST /api/v1/auth/login` with `email`, `password` — sets an `httpOnly` cookie
-3. All subsequent requests carry the cookie automatically
+3. `GET /api/v1/auth/me` with the authenticated cookie to retrieve the current user
+4. All subsequent requests carry the cookie automatically
 
 ### Google OAuth
 

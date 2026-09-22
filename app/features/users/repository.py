@@ -1,11 +1,12 @@
+from sqlalchemy import asc
 from sqlalchemy.orm import Session
 
 from app.features.users.model import User
 from app.features.users.schema import UpdateUser
 
 
-def get_all_users(db: Session) -> list[User]:
-    return db.query(User).all()
+def get_all_users(db: Session, skip: int = 0, limit: int = 10) -> list[User]:
+    return db.query(User).order_by(asc(User.id)).offset(skip).limit(limit).all()
 
 
 def get_user_by_id(db: Session, user_id: int) -> User | None:
